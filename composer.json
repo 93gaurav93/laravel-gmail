@@ -1,6 +1,6 @@
 {
-  "name": "dacastro4/laravel-gmail",
-  "description": "Gmail API package for Laravel",
+  "name": "pamekar/laravel-gmail",
+  "description": "Gmail API package for Laravel - Logs in user and stores access tokens in db",
   "keywords": [
     "api",
     "laravel",
