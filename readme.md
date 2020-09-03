@@ -1,15 +1,16 @@
 # Laravel Gmail
 
-[![Build Status](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/badges/build.png?b=master)](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/build-status/master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/?branch=master)
-[![GitHub issues](https://img.shields.io/github/issues/dacastro4/laravel-gmail.svg)](https://github.com/dacastro4/laravel-gmail/issues)
-[![Total Downloads](https://poser.pugx.org/dacastro4/laravel-gmail/downloads)](https://packagist.org/packages/dacastro4/laravel-gmail)
-[![Monthly Downloads](https://poser.pugx.org/dacastro4/laravel-gmail/d/monthly)](https://packagist.org/packages/dacastro4/laravel-gmail)
-[![GitHub license](https://img.shields.io/github/license/dacastro4/laravel-gmail.svg)](https://github.com/dacastro4/laravel-gmail/blob/master/LICENSE)
+[![Build Status](https://scrutinizer-ci.com/g/pamekar/laravel-gmail/badges/build.png?b=master)](https://scrutinizer-ci.com/g/pamekar/laravel-gmail/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pamekar/laravel-gmail/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/pamekar/laravel-gmail/?branch=master)
+[![GitHub issues](https://img.shields.io/github/issues/pamekar/laravel-gmail.svg)](https://github.com/pamekar/laravel-gmail/issues)
+[![Total Downloads](https://poser.pugx.org/pamekar/laravel-gmail/downloads)](https://packagist.org/packages/pamekar/laravel-gmail)
+[![Monthly Downloads](https://poser.pugx.org/pamekar/laravel-gmail/d/monthly)](https://packagist.org/packages/pamekar/laravel-gmail)
+[![GitHub license](https://img.shields.io/github/license/pamekar/laravel-gmail.svg)](https://github.com/pamekar/laravel-gmail/blob/master/LICENSE)
 
+## Package Logs in user and stores access tokens in db
 
 # Gmail
-Gmail API for Laravel 7
+Gmail API for Laravel 7 
 
 You need to create an application in the [Google Console](https://console.developers.google.com/apis/credentials). Guidance [here](https://developers.google.com/gmail/api/quickstart/php#step_1_turn_on_the_api_name).
 
@@ -23,15 +24,15 @@ if you need **Laravel 6** compatibility please use version `3.0.x`.
 
 # Installation
 
-Add dacastro4/laravel-gmail to composer.json.
+Add pamekar/laravel-gmail to composer.json.
 
-`"dacastro4/laravel-gmail": "^4.0"`
+`"pamekar/laravel-gmail": "^4.0"`
 
 Run composer update to pull down the latest version.
 
 Or run
 
-`composer require dacastro4/laravel-gmail`
+`composer require pamekar/laravel-gmail`
  
 Now open up `config/app.php` and add the service provider to your providers array.
 
@@ -62,7 +63,7 @@ Requires Laravel 6 and you only have to change the dependency to `"laravel/larav
 
 # Migration from 1.0 to 2.0
 The only changed made was the multi credentials feature.
-- Change your composer.json from `"dacastro4/laravel-gmail": "^1.0"` to `"dacastro4/laravel-gmail": "^2.0"`
+- Change your composer.json from `"pamekar/laravel-gmail": "^1.0"` to `"pamekar/laravel-gmail": "^2.0"`
 
 I had to change version because of a typo and that might break apps calling those attributes.
 
@@ -79,7 +80,7 @@ and so on.
 
 # Migration from 0.6 to 1.0
 The only changed made was the multi credentials feature.
-- Change your composer.json from `"dacastro4/laravel-gmail": "^0.6"` to `"dacastro4/laravel-gmail": "^1.0"`
+- Change your composer.json from `"pamekar/laravel-gmail": "^0.6"` to `"pamekar/laravel-gmail": "^1.0"`
 
 If you don't want the multi user credentials, you don't have to do anything else, if you do, you're going to have to 
 login again to create a new credentials file per user.
@@ -347,7 +348,7 @@ To get all unread emails: `LaravelGmail::message()->unread()->all()`
 
 `message()->raw($query)` for customized queries
 
-All the possible filters are in the [Filterable Trait](https://github.com/dacastro4/laravel-gmail/blob/master/src/Traits/Filterable.php)
+All the possible filters are in the [Filterable Trait](https://github.com/pamekar/laravel-gmail/blob/master/src/Traits/Filterable.php)
 
 Of course you can use as a fluent api.
 
