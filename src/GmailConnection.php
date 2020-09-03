@@ -12,264 +12,264 @@ use Illuminate\Support\Facades\Storage;
 class GmailConnection extends Google_Client
 {
 
-	use Configurable {
-		__construct as configConstruct;
-	}
+    use Configurable {
+        __construct as configConstruct;
+    }
 
-	protected $emailAddress;
-	protected $refreshToken;
-	protected $app;
-	protected $accessToken;
-	protected $token;
-	private $configuration;
-	public $userId;
+    protected $emailAddress;
+    protected $refreshToken;
+    protected $app;
+    protected $accessToken;
+    protected $token;
+    private $configuration;
+    public $userId;
 
-	public function __construct($config = null, $userId = null)
-	{
-		$this->app = Container::getInstance();
+    public function __construct($config = null, $userId = null)
+    {
+        $this->app = Container::getInstance();
 
-		$this->userId = $userId;
+        $this->userId = $userId;
 
-		$this->configConstruct($config);
+        $this->configConstruct($config);
 
-		$this->configuration = $config;
+        $this->configuration = $config;
 
-		parent::__construct($this->getConfigs());
+        parent::__construct($this->getConfigs());
 
-		$this->configApi();
+        $this->configApi();
 
-		if ($this->checkPreviouslyLoggedIn()) {
-			$this->refreshTokenIfNeeded();
-		}
+        if ($this->checkPreviouslyLoggedIn()) {
+            $this->refreshTokenIfNeeded();
+        }
 
-	}
+    }
 
-	/**
-	 * Check and return true if the user has previously logged in without checking if the token needs to refresh
-	 *
-	 * @return bool
-	 */
-	public function checkPreviouslyLoggedIn()
-	{
-		if (auth()->check()) {
-			$user = auth()->user();
-			$allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
+    /**
+     * Check and return true if the user has previously logged in without checking if the token needs to refresh
+     *
+     * @return bool
+     */
+    public function checkPreviouslyLoggedIn()
+    {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
 
-			if ($allowJsonEncrypt) {
-				$savedConfigToken = json_decode(decrypt($user->access_token), true);
-			} else {
-				$savedConfigToken = json_decode($user->access_token, true);
-			}
+            if ($allowJsonEncrypt) {
+                $savedConfigToken = json_decode(decrypt($user->access_token), true);
+            } else {
+                $savedConfigToken = json_decode($user->access_token, true);
+            }
 
-			return !empty($savedConfigToken['access_token']);
-		}
+            return !empty($savedConfigToken['access_token']);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Refresh the auth token if needed
-	 *
-	 * @return mixed|null
-	 */
-	private function refreshTokenIfNeeded()
-	{
-		if ($this->isAccessTokenExpired()) {
-			$this->fetchAccessTokenWithRefreshToken($this->getRefreshToken());
-			$token = $this->getAccessToken();
-			$this->setBothAccessToken($token);
+    /**
+     * Refresh the auth token if needed
+     *
+     * @return mixed|null
+     */
+    private function refreshTokenIfNeeded()
+    {
+        if ($this->isAccessTokenExpired()) {
+            $this->fetchAccessTokenWithRefreshToken($this->getRefreshToken());
+            $token = $this->getAccessToken();
+            $this->setBothAccessToken($token);
 
-			return $token;
-		}
+            return $token;
+        }
 
-		return $this->token;
-	}
+        return $this->token;
+    }
 
-	/**
-	 * Check if token exists and is expired
-	 * Throws an AuthException when the auth file its empty or with the wrong token
-	 *
-	 *
-	 * @return bool Returns True if the access_token is expired.
-	 */
-	public function isAccessTokenExpired()
-	{
-		$token = $this->getToken();
+    /**
+     * Check if token exists and is expired
+     * Throws an AuthException when the auth file its empty or with the wrong token
+     *
+     *
+     * @return bool Returns True if the access_token is expired.
+     */
+    public function isAccessTokenExpired()
+    {
+        $token = $this->getToken();
 
-		if ($token) {
-			$this->setAccessToken($token);
-		}
+        if ($token) {
+            $this->setAccessToken($token);
+        }
 
-		return parent::isAccessTokenExpired();
-	}
+        return parent::isAccessTokenExpired();
+    }
 
-	public function getToken()
-	{
-		return parent::getAccessToken() ?: $this->config();
-	}
+    public function getToken()
+    {
+        return parent::getAccessToken() ?: $this->config();
+    }
 
-	public function setToken($token)
-	{
-		$this->setAccessToken($token);
-	}
+    public function setToken($token)
+    {
+        $this->setAccessToken($token);
+    }
 
-	public function getAccessToken()
-	{
-		$token = parent::getAccessToken() ?: $this->config();
+    public function getAccessToken()
+    {
+        $token = parent::getAccessToken() ?: $this->config();
 
-		return $token;
-	}
+        return $token;
+    }
 
-	/**
-	 * @param array|string $token
-	 */
-	public function setAccessToken($token)
-	{
-		parent::setAccessToken($token);
-	}
+    /**
+     * @param array|string $token
+     */
+    public function setAccessToken($token)
+    {
+        parent::setAccessToken($token);
+    }
 
-	/**
-	 * @param $token
-	 * @throws \Exception
-	 */
-	public function setBothAccessToken($token)
-	{
-		$this->setAccessToken($token);
-		$this->saveAccessToken($token);
-	}
+    /**
+     * @param $token
+     * @throws \Exception
+     */
+    public function setBothAccessToken($token)
+    {
+        $this->setAccessToken($token);
+        $this->saveAccessToken($token);
+    }
 
-	/**
-	 * Save the credentials for user
-	 *
-	 * @param array $config
-	 * @throws \Exception
-	 */
-	public function saveAccessToken(array $config)
-	{
-		$allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
-		$config['email'] = $this->emailAddress;
+    /**
+     * Save the credentials for user
+     *
+     * @param array $config
+     * @throws \Exception
+     */
+    public function saveAccessToken(array $config)
+    {
+        $allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
+        $config['email'] = $this->emailAddress;
 
-		if (empty($config['email'])) {
-			if ($allowJsonEncrypt) {
-				$savedConfigToken = json_decode(decrypt(auth()->user()->access_token), true);
-			} else {
-				$savedConfigToken = json_decode(auth()->user()->access_token, true);
-			}
-			if (isset($savedConfigToken['email'])) {
-				$config['email'] = $savedConfigToken['email'];
-			}
-		}
+        if (empty($config['email'])) {
+            if ($allowJsonEncrypt) {
+                $savedConfigToken = json_decode(decrypt(auth()->user()->access_token), true);
+            } else {
+                $savedConfigToken = json_decode(auth()->user()->access_token, true);
+            }
+            if (isset($savedConfigToken['email'])) {
+                $config['email'] = $savedConfigToken['email'];
+            }
+        }
 
-		if (class_exists($this->_config['gmail.user_model'])) {
-			$userModel = $this->_config['gmail.user_model'];
-			if ($user = $userModel::where('email', $config['email'])->first()) {
-				if ($allowJsonEncrypt) {
-					$user->access_token = encrypt(json_encode($config));
-				} else {
-					$user->access_token = json_encode($config);
-				}
-				$user->save();
-			} else {
-				throw new \Exception('User not found');
-			}
-		} else {
-			throw new \Exception('User model not found');
-		}
+        if (class_exists($this->_config['gmail.user_model'])) {
+            $userModel = $this->_config['gmail.user_model'];
+            if ($user = $userModel::where('email', $config['email'])->first()) {
+                if ($allowJsonEncrypt) {
+                    $user->access_token = encrypt(json_encode($config));
+                } else {
+                    $user->access_token = json_encode($config);
+                }
+                $user->save();
+            } else {
+                throw new \Exception('User not found');
+            }
+        } else {
+            throw new \Exception('User model not found');
+        }
 
-	}
+    }
 
-	/**
-	 * @return array|string
-	 * @throws \Exception
-	 */
-	public function makeToken()
-	{
-		if (!$this->check()) {
-			$request = Request::capture();
-			$code = (string)$request->input('code', null);
-			if (!is_null($code) && !empty($code)) {
-				$accessToken = $this->fetchAccessTokenWithAuthCode($code);
-				if ($this->haveReadScope()) {
-					$me = $this->getProfile();
-					if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model'])) {
-						$userModel = $this->_config['gmail.user_model'];
-						if (!($userModel::where('email', $me->emailAddress)->first())) {
-							$user = new $userModel();
-							$user->name = explode('@', $me->emailAddress)[0];
-							$user->email = $me->emailAddress;
-							$user->password = bcrypt($this->_config['gmail.app_key']);
-							$user->save();
-						}
-						$this->emailAddress = $me->emailAddress;
-						$accessToken['email'] = $me->emailAddress;
+    /**
+     * @return array|string
+     * @throws \Exception
+     */
+    public function makeToken()
+    {
+        if (!$this->check()) {
+            $request = Request::capture();
+            $code = (string)$request->input('code', null);
+            if (!is_null($code) && !empty($code)) {
+                $accessToken = $this->fetchAccessTokenWithAuthCode($code);
+                if ($this->haveReadScope()) {
+                    $me = $this->getProfile();
+                    if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model'])) {
+                        $userModel = $this->_config['gmail.user_model'];
+                        if (!($userModel::where('email', $me->emailAddress)->first())) {
+                            $user = new $userModel();
+                            $user->name = explode('@', $me->emailAddress)[0];
+                            $user->email = $me->emailAddress;
+                            $user->password = bcrypt($this->_config['gmail.app_key']);
+                            $user->save();
+                        }
+                        $this->emailAddress = $me->emailAddress;
+                        $accessToken['email'] = $me->emailAddress;
 
-						$this->setBothAccessToken($accessToken);
-						$accessToken['login'] = auth()->attempt($accessToken['email'], $this->_config['gmail.app_key']);
-						return $accessToken;
-					}
-				}
-			}
-			throw new \Exception('No access token');
-		} else {
-			return $this->getAccessToken();
-		}
-	}
+                        $this->setBothAccessToken($accessToken);
+                        $accessToken['login'] = auth()->attempt(['email' => $accessToken['email'], 'password' => $this->_config['gmail.app_key']]);
+                        return $accessToken;
+                    }
+                }
+            }
+            throw new \Exception('No access token');
+        } else {
+            return $this->getAccessToken();
+        }
+    }
 
-	/**
-	 * Check
-	 *
-	 * @return bool
-	 */
-	public function check()
-	{
-		return !$this->isAccessTokenExpired();
-	}
+    /**
+     * Check
+     *
+     * @return bool
+     */
+    public function check()
+    {
+        return !$this->isAccessTokenExpired();
+    }
 
-	/**
-	 * Gets user profile from Gmail
-	 *
-	 * @return \Google_Service_Gmail_Profile
-	 */
-	public function getProfile()
-	{
-		$service = new Google_Service_Gmail($this);
+    /**
+     * Gets user profile from Gmail
+     *
+     * @return \Google_Service_Gmail_Profile
+     */
+    public function getProfile()
+    {
+        $service = new Google_Service_Gmail($this);
 
-		return $service->users->getProfile('me');
-	}
+        return $service->users->getProfile('me');
+    }
 
-	/**
-	 * Revokes user's permission and logs them out
-	 */
-	public function logout()
-	{
-		$this->revokeToken();
-	}
+    /**
+     * Revokes user's permission and logs them out
+     */
+    public function logout()
+    {
+        $this->revokeToken();
+    }
 
-	/**
-	 * Delete the credentials for a user
-	 */
-	public function deleteAccessToken()
-	{
-		if (auth()->check()) {
+    /**
+     * Delete the credentials for a user
+     */
+    public function deleteAccessToken()
+    {
+        if (auth()->check()) {
 
-			$user = auth()->user();
-			$allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
+            $user = auth()->user();
+            $allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
 
-			if ($allowJsonEncrypt) {
-				$user->access_token = encrypt(json_encode([]));
-			} else {
-				$user->access_token = json_encode([]);
-			}
-		} else {
-			abort(401);
-		}
-	}
+            if ($allowJsonEncrypt) {
+                $user->access_token = encrypt(json_encode([]));
+            } else {
+                $user->access_token = json_encode([]);
+            }
+        } else {
+            abort(401);
+        }
+    }
 
-	private function haveReadScope()
-	{
-		$scopes = $this->getUserScopes();
+    private function haveReadScope()
+    {
+        $scopes = $this->getUserScopes();
 
-		return in_array(Google_Service_Gmail::GMAIL_READONLY, $scopes);
-	}
+        return in_array(Google_Service_Gmail::GMAIL_READONLY, $scopes);
+    }
 
 }
