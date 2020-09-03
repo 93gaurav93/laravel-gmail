@@ -96,4 +96,16 @@ return [
 	*/
 
 	'allow_json_encrypt' => env('GOOGLE_ALLOW_JSON_ENCRYPT', false),
+
+    /*
+	|--------------------------------------------------------------------------
+	| User Model
+	|--------------------------------------------------------------------------
+	|
+	|   User model for storing access tokens
+	|
+	|
+	*/
+
+    'user_model' => '\App\User',
 ];
