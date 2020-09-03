@@ -51,7 +51,7 @@ class GmailConnection extends Google_Client
 	 */
 	public function checkPreviouslyLoggedIn()
 	{
-		if(auth()->check()) {
+		if (auth()->check()) {
 			$user = auth()->user();
 			$allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
 
@@ -160,7 +160,7 @@ class GmailConnection extends Google_Client
 			}
 		}
 
-		if (class_exists($this->_config['gmail.user_model']())) {
+		if (class_exists($this->_config['gmail.user_model'])) {
 			$userModel = $this->_config['gmail.user_model'];
 			if ($user = $userModel::where('email', $config['email'])->first()) {
 				if ($allowJsonEncrypt) {
@@ -191,7 +191,7 @@ class GmailConnection extends Google_Client
 				$accessToken = $this->fetchAccessTokenWithAuthCode($code);
 				if ($this->haveReadScope()) {
 					$me = $this->getProfile();
-					if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model']())) {
+					if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model'])) {
 						$userModel = $this->_config['gmail.user_model'];
 						if (!($userModel::where('email', $me->emailAddress)->first())) {
 							$user = new $userModel();
@@ -249,7 +249,7 @@ class GmailConnection extends Google_Client
 	 */
 	public function deleteAccessToken()
 	{
-		if(auth()->check()) {
+		if (auth()->check()) {
 
 			$user = auth()->user();
 			$allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
@@ -259,7 +259,7 @@ class GmailConnection extends Google_Client
 			} else {
 				$user->access_token = json_encode([]);
 			}
-		}else{
+		} else {
 			abort(401);
 		}
 	}
