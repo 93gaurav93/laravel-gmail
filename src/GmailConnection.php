@@ -187,7 +187,7 @@ class GmailConnection extends Google_Client
         if (!$this->check()) {
             $request = Request::capture();
             $code = (string)$request->input('code', null);
-            if (!is_null($code) && !empty($code)) {
+            if (!is_null($code)) {
                 $accessToken = $this->fetchAccessTokenWithAuthCode($code);
                 if ($this->haveReadScope()) {
                     $me = $this->getProfile();
@@ -204,7 +204,7 @@ class GmailConnection extends Google_Client
                         $accessToken['email'] = $me->emailAddress;
 
                         $this->setBothAccessToken($accessToken);
-                        $accessToken['login'] = auth()->attempt(['email' => $accessToken['email'], 'password' => $this->_config['gmail.app_key']]);
+                        $accessToken['jwt'] = auth('api')->attempt(['email' => $accessToken['email'], 'password' => $this->_config['gmail.app_key']]);
                         return $accessToken;
                     }
                 }
