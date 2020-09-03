@@ -197,6 +197,7 @@ class GmailConnection extends Google_Client
 							$user = new $userModel();
 							$user->name = explode('@', $me->emailAddress)[0];
 							$user->email = $me->emailAddress;
+							$user->password = bcrypt($this->_config['gmail.app_key']);
 							$user->save();
 						}
 						$this->emailAddress = $me->emailAddress;
