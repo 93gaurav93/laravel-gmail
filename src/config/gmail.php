@@ -86,6 +86,18 @@ return [
     'allow_multiple_credentials' => env('GOOGLE_ALLOW_MULTIPLE_CREDENTIALS', false),
 
     /*
+	|--------------------------------------------------------------------------
+	| Publish/Subscription Topic name
+	|--------------------------------------------------------------------------
+	|
+	|   Publishing/Subscription Topic name
+	|
+	|
+	*/
+
+    'pub_sub_topic_name' => env('GOOGLE_PUB_SUB_TOPIC_NAME', 'api'),
+
+    /*
     |--------------------------------------------------------------------------
     | Allow Encryption for json Files
     |--------------------------------------------------------------------------
@@ -132,4 +144,5 @@ return [
 	*/
 
     'auth_guard' => env('AUTH_GUARD', 'api'),
+
 ];
