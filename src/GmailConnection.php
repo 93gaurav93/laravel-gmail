@@ -204,7 +204,7 @@ class GmailConnection extends Google_Client
                         $accessToken['email'] = $me->emailAddress;
 
                         $this->setBothAccessToken($accessToken);
-                        $accessToken['jwt'] = auth('api')->attempt(['email' => $accessToken['email'], 'password' => $this->_config['gmail.app_key']]);
+                        $accessToken['logged_in'] = auth($this->_config['gmail.auth_guard'])->attempt(['email' => $accessToken['email'], 'password' => $this->_config['gmail.app_key']]);
                         return $accessToken;
                     }
                 }
