@@ -237,6 +237,44 @@ class GmailConnection extends Google_Client
         return $service->users->getProfile('me');
     }
 
+
+    /**
+     * Set up or update a push notification watch on the given user mailbox.
+     *
+     * @param string $userId The user's email address. The special value `me` can be
+     * used to indicate the authenticated user.
+     * @param array $labelIds
+     *
+     * @return \Google_Service_Gmail_WatchResponse
+     */
+    public function watch(string $userId = 'me', array $labelIds = ['INBOX'])
+    {
+        $service = new Google_Service_Gmail($this);
+
+        $watch = new \Google_Service_Gmail_WatchRequest();
+        $watch->topicName = $this->_config['gmail.pub_sub_topic_name'];
+        $watch->labelIds = $labelIds;
+
+        return $service->users->watch($userId, $watch);
+    }
+
+
+    /**
+     * Stop receiving push notifications for the given user mailbox. (users.stop)
+     *
+     * @param string $userId The user's email address. The special value `me` can be
+     * used to indicate the authenticated user.
+     * @param array $optParams Optional parameters.
+     *
+     * @return \expectedClass|\Google_Http_Request
+     */
+    public function stop(string $userId, array $optParams = array())
+    {
+        $service = new Google_Service_Gmail($this);
+
+        return $service->users->stop($userId, []);
+    }
+
     /**
      * Revokes user's permission and logs them out
      */
@@ -271,5 +309,6 @@ class GmailConnection extends Google_Client
 
         return in_array(Google_Service_Gmail::GMAIL_READONLY, $scopes);
     }
+
 
 }
