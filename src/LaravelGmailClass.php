@@ -68,9 +68,9 @@ class LaravelGmailClass extends GmailConnection
 
 	public function logout()
 	{
-		$this->revokeToken();
-		$this->deleteAccessToken();
-		auth('api')->logout();
-	}
+        $this->revokeToken();
+        $this->deleteAccessToken();
+        auth()->logout();
+    }
 
 }
