@@ -60,6 +60,7 @@ class GmailConnection extends Google_Client
             } else {
                 $savedConfigToken = json_decode($user->access_token, true);
             }
+            $this->setAccessToken($savedConfigToken);
 
             return !empty($savedConfigToken['access_token']);
         }
