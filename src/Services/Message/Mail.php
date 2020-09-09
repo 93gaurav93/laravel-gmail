@@ -531,26 +531,37 @@ class Mail extends GmailConnection
 	}
 
 	/**
-	 * Get's the gmail information from the Mail
-	 *
-	 * @return Mail
-	 */
-	public function load()
-	{
-		$message = $this->service->users_messages->get('me', $this->getId());
+     * Get's the gmail information from the Mail
+     *
+     * @return Mail
+     */
+    public function load()
+    {
+        $message = $this->service->users_messages->get('me', $this->getId());
 
-		return new self($message);
-	}
+        return new self($message);
+    }
 
-	/**
-	 * Sets the access token in case we wanna use a different token
-	 *
-	 * @param string $token
-	 *
-	 * @return Mail
-	 */
-	public function using($token)
-	{
+    /**
+     * @param string $email The user's email address. The special value `me` can be
+     * used to indicate the authenticated user.
+     * @param int|null $historyId Returns history records after the specified startHistoryId
+     * @return \Google_Service_Gmail_ListHistoryResponse
+     */
+    public function usersHistory(string $email = 'me', int $historyId = null)
+    {
+        return $this->service->users_history->listUsersHistory($email, ['startHistoryId' => $historyId]);
+    }
+
+    /**
+     * Sets the access token in case we wanna use a different token
+     *
+     * @param string $token
+     *
+     * @return Mail
+     */
+    public function using($token)
+    {
 		$this->setToken($token);
 
 		return $this;
