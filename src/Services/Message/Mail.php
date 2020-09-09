@@ -548,7 +548,7 @@ class Mail extends GmailConnection
      * @param string|null $historyId Returns history records after the specified startHistoryId
      * @return \Google_Service_Gmail_ListHistoryResponse
      */
-    public function usersHistory(string $email = 'me', string $historyId = null)
+    public function usersHistory(string $email = 'me', string $historyId = "")
     {
         return $this->service->users_history->listUsersHistory($email, ['startHistoryId' => $historyId]);
     }
