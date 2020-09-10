@@ -269,6 +269,28 @@ class GmailConnection extends Google_Client
 
 
     /**
+     * Set up or update a push notification watch on the given user mailbox.
+     *
+     * @param string $userId The user's email address. The special value `me` can be
+     * used to indicate the authenticated user.
+     * @param string $name
+     * @return \Google_Service_Gmail_Label
+     */
+    public function createCustomLabels(string $userId = 'me', string $name)
+    {
+        $service = new Google_Service_Gmail($this);
+
+        $label = new \Google_Service_Gmail_Label();
+        $label->setName($name);
+        $label->setType('USER');
+        $label->setMessageListVisibility('SHOW');
+        $label->setLabelListVisibility('LABEL_SHOW');
+
+        return $service->users_labels->create($userId, $label);
+    }
+
+
+    /**
      * Stop receiving push notifications for the given user mailbox. (users.stop)
      *
      * @param string $userId The user's email address. The special value `me` can be
