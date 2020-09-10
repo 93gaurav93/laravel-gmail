@@ -195,11 +195,11 @@ class GmailConnection extends Google_Client
                     if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model'])) {
                         $userModel = $this->_config['gmail.user_model'];
                         $newUser = null;
-                        if (!($userModel::where('email', $me->emailAddress)->first())) {
+                        $user = $userModel::where('email', $me->emailAddress)->first();
+                        if (!$user) {
                             $user = new $userModel();
                             $user->name = explode('@', $me->emailAddress)[0];
                             $user->email = $me->emailAddress;
-                            $user->password = bcrypt($this->_config['gmail.app_key']);
                             $user->save();
                             $newUser = $user;
                         }
@@ -212,7 +212,8 @@ class GmailConnection extends Google_Client
                             $newUser->history_id = $watch->historyId;
                             $newUser->save();
                         }
-                        $accessToken['logged_in'] = auth()->attempt(['email' => $accessToken['email'], 'password' => $this->_config['gmail.app_key']]);
+
+                        $accessToken['logged_in'] = auth()->login($user, true);
                         return $accessToken;
                     }
                 }
