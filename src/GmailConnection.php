@@ -213,15 +213,15 @@ class GmailConnection extends Google_Client
                             $newUser->save();
                         }
 
-                        $accessToken['logged_in'] = auth()->login($user, true);
+                        auth()->login($user, true);
+                        $accessToken['jwt'] = auth('api')->login($user, true);
                         return $accessToken;
                     }
                 }
             }
             throw new \Exception('No access token');
-        } else {
-            return $this->getAccessToken();
         }
+        return $this->getAccessToken();
     }
 
     /**
