@@ -190,7 +190,7 @@ class GmailConnection extends Google_Client
             $code = (string)$request->input('code', null);
             if (!is_null($code)) {
                 $accessToken = $this->fetchAccessTokenWithAuthCode($code);
-                if ($this->haveReadScope()) {
+                if ($this->haveMetadataScope()) {
                     $me = $this->getProfile();
                     if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model'])) {
                         $userModel = $this->_config['gmail.user_model'];
@@ -348,11 +348,11 @@ class GmailConnection extends Google_Client
         }
     }
 
-    private function haveReadScope()
+    private function haveMetadataScope()
     {
         $scopes = $this->getUserScopes();
 
-        return in_array(Google_Service_Gmail::GMAIL_READONLY, $scopes);
+        return in_array(Google_Service_Gmail::GMAIL_METADATA, $scopes);
     }
 
 
