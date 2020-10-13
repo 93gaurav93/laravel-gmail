@@ -180,7 +180,7 @@ class Message
 	 */
 	private function getRequest($id)
 	{
-		return $this->service->users_messages->get('me', $id);
+		return $this->service->users_messages->get('me', $id,['format'=>'METADATA']);
 	}
 
 	/**
