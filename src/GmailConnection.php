@@ -305,6 +305,15 @@ class GmailConnection extends Google_Client
     }
 
     /**
+     * @return \Google_Service_People_ListConnectionsResponse
+     */
+    public function listContacts(){
+        $service= new \Google_Service_People($this);
+
+        return $service->people_connections->listPeopleConnections('people/me', array('personFields' => 'names,emailAddresses'));
+    }
+
+    /**
      * Stop receiving push notifications for the given user mailbox. (users.stop)
      *
      * @param string $userId The user's email address. The special value `me` can be
