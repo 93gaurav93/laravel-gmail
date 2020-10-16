@@ -307,10 +307,11 @@ class GmailConnection extends Google_Client
     /**
      * @return \Google_Service_People_ListConnectionsResponse
      */
-    public function listContacts(){
-        $service= new \Google_Service_People($this);
+    public function listContacts()
+    {
+        $service = new \Google_Service_People($this);
 
-        return $service->people_connections->listPeopleConnections('people/me', array('personFields' => 'names,emailAddresses'));
+        return $service->people_connections->listPeopleConnections('people/me', ['requestMask.includeField' => 'person.emailAddresses']);
     }
 
     /**
