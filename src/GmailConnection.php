@@ -55,11 +55,7 @@ class GmailConnection extends Google_Client
             $user = auth()->user();
             $allowJsonEncrypt = $this->_config['gmail.allow_json_encrypt'];
 
-            if ($allowJsonEncrypt) {
-                $savedConfigToken = json_decode(decrypt($user->access_token), true);
-            } else {
-                $savedConfigToken = json_decode($user->access_token, true);
-            }
+            $savedConfigToken = json_decode($user->access_token, true);
             $this->setAccessToken($savedConfigToken);
 
             return !empty($savedConfigToken['access_token']);
@@ -151,11 +147,7 @@ class GmailConnection extends Google_Client
         $config['email'] = $this->emailAddress;
 
         if (empty($config['email'])) {
-            if ($allowJsonEncrypt) {
-                $savedConfigToken = json_decode(decrypt(auth()->user()->access_token), true);
-            } else {
-                $savedConfigToken = json_decode(auth()->user()->access_token, true);
-            }
+            $savedConfigToken = json_decode(auth()->user()->access_token, true);
             if (isset($savedConfigToken['email'])) {
                 $config['email'] = $savedConfigToken['email'];
             }
@@ -246,6 +238,17 @@ class GmailConnection extends Google_Client
         return $service->users->getProfile('me');
     }
 
+    /**
+     * Gets user profile from Gmail
+     *
+     * @return \Google_Service_Gmail_Profile
+     */
+    public function getProfileDetails(array $optParams)
+    {
+        $service = new \Google_Service_PeopleService($this);
+
+        return $service->people->get('people/me', $optParams)->getn;
+    }
 
     /**
      * Set up or update a push notification watch on the given user mailbox.
