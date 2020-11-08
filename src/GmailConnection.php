@@ -371,11 +371,11 @@ class GmailConnection extends Google_Client
         }
     }
 
-    private function haveMetadataScope()
+    private function haveScopes(): bool
     {
         $scopes = $this->getUserScopes();
 
-        return in_array(Google_Service_Gmail::GMAIL_MODIFY, $scopes)&& in_array(Google_Service_Gmail::GMAIL_SETTINGS_BASIC, $scopes);
+        return in_array(Google_Service_Gmail::GMAIL_MODIFY, $scopes, true) && in_array(Google_Service_Gmail::GMAIL_SETTINGS_BASIC, $scopes, true);
     }
 
 
