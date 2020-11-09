@@ -375,7 +375,7 @@ class GmailConnection extends Google_Client
     {
         $scopes = $this->getUserScopes();
 
-        return in_array(Google_Service_Gmail::GMAIL_MODIFY, $scopes, true) && in_array(Google_Service_Gmail::GMAIL_SETTINGS_BASIC, $scopes, true);
+        return in_array(Google_Service_Gmail::GMAIL_MODIFY, $scopes) && in_array(Google_Service_Gmail::GMAIL_SETTINGS_BASIC, $scopes);
     }
 
 
