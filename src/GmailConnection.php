@@ -8,6 +8,7 @@ use Google_Service_Gmail;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class GmailConnection extends Google_Client
 {
@@ -378,5 +379,45 @@ class GmailConnection extends Google_Client
         return in_array(Google_Service_Gmail::GMAIL_MODIFY, $scopes) && in_array(Google_Service_Gmail::GMAIL_SETTINGS_BASIC, $scopes);
     }
 
+    private function createFilter(string $userId, $filterId, array $criterias = [], array $actions = [], array $optParams = array())
+    {
+        $filter = new \Google_Service_Gmail_Filter();
+
+        $criteria = new \Google_Service_Gmail_FilterCriteria();
+        $criteria->setFrom($criterias['from'] ?? "");
+        $criteria->setTo($criterias['to'] ?? "");
+        $criteria->setSubject($criterias['subject'] ?? "");
+        $criteria->setQuery($criterias['query'] ?? "is:unread");
+        $criteria->setNegatedQuery($criterias['negatedQuery' ?? ""]);
+        $criteria->setExcludeChats($criterias['excludeChats'] ?? true);
+
+        $action = new \Google_Service_Gmail_FilterAction();
+        $action->setAddLabelIds($actions['addLabelIds'] ?? []);
+        $action->setRemoveLabelIds($actions['removeLabelIds'] ?? []);
+        $action->setForward($actions['forward'] ?? "");
+
+        $filter->setId($filterId);
+        $filter->setCriteria($criteria);
+        $filter->setAction($action);
+
+        $service = new Google_Service_Gmail($this);
+        return $service->users_settings_filters->create($userId, $filter, $optParams);
+    }
+
+    private function listFilters(string $userId, array $optParams = array())
+    {
+        $service = new Google_Service_Gmail($this);
+
+        return $service->users_settings_filters->listUsersSettingsFilters($userId, $optParams);
+    }
+
+    private function deleteFilters(string $userId, array $optParams = array())
+    {
+        $filters = $this->listFilters($userId);
+        foreach ($filters->getFilter() as $filter) {
+            $service = new Google_Service_Gmail($this);
+            $service->users_settings_filters->delete($userId, $filter->id);
+        }
+    }
 
 }
