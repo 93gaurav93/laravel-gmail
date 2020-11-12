@@ -414,7 +414,7 @@ class GmailConnection extends Google_Client
     public function deleteFilters(string $userId, string $filterId)
     {
         $service = new Google_Service_Gmail($this);
-        $service->users_settings_filters->delete($userId, $filterId);
+        return $service->users_settings_filters->delete($userId, $filterId);
     }
 
 }
