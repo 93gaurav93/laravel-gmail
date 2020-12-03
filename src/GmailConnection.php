@@ -319,6 +319,16 @@ class GmailConnection extends Google_Client
     }
 
     /**
+     * @return \Google_Service_PeopleService_ListOtherContactsResponse
+     */
+    public function listOtherContacts(array $optParams)
+    {
+        $service = new \Google_Service_PeopleService($this);
+
+        return $service->otherContacts->listOtherContacts($optParams);
+    }
+
+    /**
      * @return \Google_Service_PeopleService_SearchDirectoryPeopleResponse
      */
     public function searchDirectory(array $optParams)
