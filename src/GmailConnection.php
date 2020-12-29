@@ -157,10 +157,10 @@ class GmailConnection extends Google_Client
         if (class_exists($this->_config['gmail.user_model'])) {
             $userModel = $this->_config['gmail.user_model'];
             if ($user = $userModel::where('email', $config['email'])->first()) {
-                $token = json_decode($user->access_token, true) ?? [];
+                $token = $user->raw_access_token ?? [];
                 $token['payload'] = $config;
-                if ($refreshToken = $config['refresh_token'] ?? null) {
-                    $token['refresh_token'] = $refreshToken;
+                if (isset($config['refresh_token'])) {
+                    $token['refresh_token'] = $config['refresh_token'];
                 }
 
                 if ($allowJsonEncrypt) {
