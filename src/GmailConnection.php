@@ -70,7 +70,7 @@ class GmailConnection extends Google_Client
      *
      * @return mixed|null
      */
-    private function refreshTokenIfNeeded()
+    public function refreshTokenIfNeeded()
     {
         if ($this->isAccessTokenExpired()) {
             $this->fetchAccessTokenWithRefreshToken($this->getRefreshToken());
@@ -305,6 +305,22 @@ class GmailConnection extends Google_Client
         $service = new Google_Service_Gmail($this);
 
         return $service->users_labels->listUsersLabels($userId);
+    }
+
+
+    /**
+     * Delete user custom labels
+     *
+     * @param string $userId The user's email address. The special value `me` can be
+     * used to indicate the authenticated user.
+     * @param string $name
+     * @return \Google_Service_Gmail_Label
+     */
+    public function deleteCustomLabel(string $id, string $userId = 'me')
+    {
+        $service = new Google_Service_Gmail($this);
+
+        return $service->users_labels->delete($userId, $id);
     }
 
     /**
