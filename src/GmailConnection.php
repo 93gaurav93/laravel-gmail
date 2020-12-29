@@ -157,10 +157,16 @@ class GmailConnection extends Google_Client
         if (class_exists($this->_config['gmail.user_model'])) {
             $userModel = $this->_config['gmail.user_model'];
             if ($user = $userModel::where('email', $config['email'])->first()) {
+                $token = json_decode($user->access_token, true) ?? [];
+                $token['payload'] = $config;
+                if ($refreshToken = $config['refresh_token'] ?? null) {
+                    $token['refresh_token'] = $refreshToken;
+                }
+
                 if ($allowJsonEncrypt) {
-                    $user->access_token = encrypt(json_encode($config));
+                    $user->access_token = encrypt(json_encode($token));
                 } else {
-                    $user->access_token = json_encode($config);
+                    $user->access_token = json_encode($token);
                 }
                 $user->save();
             } else {
@@ -415,7 +421,7 @@ class GmailConnection extends Google_Client
         $criteria->setQuery($criterias['query'] ?? "is:unread");
         $criteria->setNegatedQuery($criterias['negatedQuery'] ?? "");
         $criteria->setExcludeChats($criterias['excludeChats'] ?? true);
-        
+
         $action = new \Google_Service_Gmail_FilterAction();
         $action->setAddLabelIds($actions['addLabelIds'] ?? []);
         $action->setRemoveLabelIds($actions['removeLabelIds'] ?? []);
