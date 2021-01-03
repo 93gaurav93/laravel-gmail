@@ -69,6 +69,7 @@ class GmailConnection extends Google_Client
      * Refresh the auth token if needed
      *
      * @return mixed|null
+     * @throws \Exception
      */
     public function refreshTokenIfNeeded()
     {
@@ -133,7 +134,7 @@ class GmailConnection extends Google_Client
     public function setBothAccessToken($token)
     {
         $this->setAccessToken($token);
-        $this->saveAccessToken($token);
+        return $this->saveAccessToken($token);
     }
 
     /**
@@ -169,13 +170,14 @@ class GmailConnection extends Google_Client
                     $user->access_token = json_encode($token);
                 }
                 $user->save();
-            } else {
-                throw new \Exception('User not found');
+
+                return $user;
             }
-        } else {
-            throw new \Exception('User model not found');
+
+            throw new \Exception('User not found');
         }
 
+        throw new \Exception('User model not found');
     }
 
     /**
@@ -205,7 +207,7 @@ class GmailConnection extends Google_Client
                         $this->emailAddress = $me->emailAddress;
                         $accessToken['email'] = $me->emailAddress;
 
-                        $this->setBothAccessToken($accessToken);
+                        $user = $this->setBothAccessToken($accessToken);
                         $watch = $this->watch('me');
                         if ($newUser) {
                             $newUser->history_id = $watch->historyId;
