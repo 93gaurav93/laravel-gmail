@@ -192,14 +192,15 @@ class GmailConnection extends Google_Client
             if (!is_null($code)) {
                 $accessToken = $this->fetchAccessTokenWithAuthCode($code);
                 if ($this->haveScopes()) {
-                    $me = $this->getProfile();
+                    $me=$this->getProfile();
+                    $profile = $this->getProfileDetails(['personFields' => 'names']);
                     if (property_exists($me, 'emailAddress') && class_exists($this->_config['gmail.user_model'])) {
                         $userModel = $this->_config['gmail.user_model'];
                         $newUser = null;
                         $user = $userModel::where('email', $me->emailAddress)->first();
                         if (!$user) {
                             $user = new $userModel();
-                            $user->name = explode('@', $me->emailAddress)[0];
+                            $user->name = $profile->names[0]->displayName;
                             $user->email = $me->emailAddress;
                             $user->save();
                             $newUser = $user;
@@ -217,7 +218,7 @@ class GmailConnection extends Google_Client
                         $accessToken['jwt'] = auth()->login($user, true);
                         return $accessToken;
                     }
-                }
+                 }
             }
             throw new \Exception('No access token');
         }
@@ -249,13 +250,13 @@ class GmailConnection extends Google_Client
     /**
      * Gets user profile from Gmail
      *
-     * @return \Google_Service_Gmail_Profile
+     * @return \Google_Service_PeopleService_Person
      */
     public function getProfileDetails(array $optParams)
     {
         $service = new \Google_Service_PeopleService($this);
 
-        return $service->people->get('people/me', $optParams)->getn;
+        return $service->people->get('people/me', $optParams);
     }
 
     /**
