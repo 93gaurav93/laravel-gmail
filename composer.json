@@ -1,5 +1,5 @@
 {
-  "name": "pamekar/laravel-gmail",
+  "name": "93gaurav93/laravel-gmail",
   "description": "Gmail API package for Laravel - Logs in user and stores access tokens in db",
   "keywords": [
     "api",
@@ -12,6 +12,11 @@
       "name": "Daniel Castro",
       "email": "danielcastro04@gmail.com",
       "homepage": "https://danielcastro.me"
+    },
+    {
+      "name": "Gaurav Deshpande",
+      "email": "93gaurav93@gmail.com",
+      "homepage": "https://github.com/93gaurav93"
     }
   ],
   "require": {
